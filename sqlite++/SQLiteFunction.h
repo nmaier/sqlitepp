@@ -13,7 +13,7 @@
 #ifndef _SQLITEPP_FUNC_H
 #define _SQLITEPP_FUNC_H
 
-#ifdef MSVC
+#if _MSC_VER >= 1000
 #pragma once
 #endif
 
@@ -43,7 +43,11 @@ namespace SQLite
 		void set(string v)
 		{
 			char *t = (char*)malloc(v.length() + 1);
+#if _MSC_VER >= 1400
+			strcpy_s(t, v.length() + 1, v.c_str());
+#else
 			strcpy(t, v.c_str());
+#endif
 			sqlite3_result_text(ctx, t, (int)v.length(), free);
 		}
 		void set(void *data, unsigned length)
