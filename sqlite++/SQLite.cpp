@@ -13,14 +13,14 @@
 
 #include "sqlite.h"
 #ifdef OS_WIN
-#undef OS_WIN
+#   undef OS_WIN
 #endif
 
 #if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__BORLANDC__)
-#define OS_WIN
-#include <windows.h>
+#   define OS_WIN
+#   include <windows.h>
 #else
-#include <unistd.h>
+#   include <unistd.h>
 #endif
 
 static int busy_handler(void *, int attempts)
@@ -57,17 +57,33 @@ namespace SQLite
 		va_start(ap, fmt);
 		char *o = sqlite3_vmprintf(fmt, ap);
 		va_end(ap);
-		
+
 		string rv(o);
 		sqlite3_free(o);
 		return rv;
-        
 	}
 
-	DB::DB(const string &aDB)
-	: db(aDB), ctx(NULL), inTrans(false)
+	DB::DB(const char *aDB)
+	: ctx(NULL), inTrans(false)    
+    {
+        open(aDB);
+    }
+	DB::DB(const string& aDB)
+	: ctx(NULL), inTrans(false)
 	{
-		if (SQLITE_OK != sqlite3_open(db.c_str(), &ctx))
+        open(aDB.c_str());
+	}
+#ifdef __BORLANDC__
+    DB::DB(const AnsiString& aDB)
+    : ctx(NULL), inTrans(false)
+    {
+        open(aDB.c_str());
+    }
+#endif
+    void DB::open(const char *aDB)
+    {
+        db = aDB;
+		if (SQLITE_OK != sqlite3_open(aDB, &ctx))
 		{
 			throw Exception(ctx);
 		}
@@ -76,7 +92,7 @@ namespace SQLite
 				busy_handler,
 				NULL
 				);
-	}
+    }
 
 	DB::~DB()
 	{
@@ -99,6 +115,17 @@ namespace SQLite
 	{
 		prepare(aQuery).execute();
 	}
+    void __cdecl DB::execute(const char* aQuery, ...)
+    {
+		va_list ap;
+		va_start(ap, aQuery);
+		char *o = sqlite3_vmprintf(aQuery, ap);
+		va_end(ap);
+
+        string Query(o);
+		sqlite3_free(o);
+        execute(Query);
+    }
 
 	void DB::begin(TransactionType aType)
 	{

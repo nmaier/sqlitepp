@@ -100,11 +100,18 @@ namespace SQLite
 		CHKTHROW;
 		SQLOK(sqlite3_bind_double(stmt, idx, value));
 	}
-	void Stmt::bind(unsigned idx, string value)
+	void Stmt::bind(unsigned idx, const string& value)
 	{
 		CHKTHROW;
 		SQLOK(sqlite3_bind_text(stmt, idx, value.c_str(), (int)value.length(), SQLITE_TRANSIENT));
 	}
+#ifdef __BORLANDC__
+    void Stmt::bind(unsigned idx, const AnsiString& value)
+    {
+        CHKTHROW;
+        SQLOK(sqlite3_bind_text(stmt, idx, value.c_str(), value.Length(), SQLITE_TRANSIENT));
+    }
+#endif
 	void Stmt::bind(unsigned idx, void *value, unsigned length)
 	{
 		CHKTHROW;

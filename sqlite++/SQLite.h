@@ -21,10 +21,68 @@
 #include <deque>
 #include <sqlite3.h>
 
+#ifdef __BORLANDC__
+#   include <Classes.hpp>
+#endif
+
 using namespace std;
 
 namespace SQLite
 {
+#ifdef __BORLANDC__
+    class Exception : public ::Exception
+    {
+    public:
+        explicit Exception(sqlite3 *ctx)
+            : ::Exception("")
+        {
+            AnsiString m;
+            m.sprintf(
+                "%s (Code: %d)",
+                sqlite3_errmsg(ctx),
+                sqlite3_errcode(ctx)
+            );
+            Message = m;
+        }
+        explicit Exception(const string& error)
+            : ::Exception(error.c_str())
+        {
+        }
+        explicit Exception(const AnsiString& error)
+            : errorCode(0), ::Exception(error)
+        {
+        }
+        explicit Exception(const char *error)
+            : errorCode(0), ::Exception(error)
+        {
+        }
+
+        explicit Exception(const int aCode)
+            : errorCode(aCode), ::Exception("")
+        {
+            if (errorCode == SQLITE_OK)
+            {
+                Message = "No Error";
+            }
+            else if (errorCode == SQLITE_BUSY)
+            {
+                Message = "Database is busy";
+            }
+            else if (errorCode == SQLITE_NOMEM)
+            {
+                Message = "No memory";
+            }
+            else if (errorCode == SQLITE_MISUSE)
+            {
+                Message = "Misuse";
+            }
+            else
+            {
+                Message = "General error";
+            }
+        }
+
+#else
     class Exception
     {
         string error;
@@ -65,14 +123,15 @@ namespace SQLite
             }
         }
 
-        ~Exception(void)
-        {
-        }
-
         const string &getErrorMsg() const
         {
             return error;
         }
+#endif
+    private:
+        int errorCode;
+
+    public:
         const int getErrorCode() const
         {
             return errorCode;
@@ -296,11 +355,15 @@ namespace SQLite
         void check();
         void reset();
         void finalize();
+
         void bind(unsigned idx);
         void bind(unsigned idx, int value);
         void bind(unsigned idx, __int64 value);
         void bind(unsigned idx, double value);
-        void bind(unsigned idx, string value);
+        void bind(unsigned idx, const string& value);
+#ifdef __BORLANDC__
+        void bind(unsigned idx, const AnsiString& value);
+#endif
         void bind(unsigned idx, void *value, unsigned length);
 
         const string& getQuery() const { return query; }
@@ -335,12 +398,19 @@ namespace SQLite
         typedef deque<Function*> FuncList;
         FuncList funcs;
 
+        void open(const char *aDB);
+
     public:
-        DB(const string &aDB);
+        explicit DB(const char *aDB);
+        explicit DB(const string& aDB);
+#ifdef __BORLANDC__
+        explicit DB(const AnsiString& aDB);
+#endif
         virtual ~DB();
 
         Stmt prepare(const string &aQuery);
         void execute(const string &aQuery);
+        void __cdecl execute(const char *aQuery, ...);
 
         void begin(TransactionType aType = DEFERRED);
         void commit();
