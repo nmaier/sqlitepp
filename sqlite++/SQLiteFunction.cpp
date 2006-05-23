@@ -11,6 +11,7 @@
 *************************************************************************
 */
 #include "SQLite.h"
+using namespace std;
 
 namespace SQLite
 {

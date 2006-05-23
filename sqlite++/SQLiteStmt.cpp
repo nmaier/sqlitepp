@@ -12,6 +12,7 @@
 */
 
 #include "SQLite.h"
+using namespace std;
 
 namespace SQLite
 {
@@ -147,14 +148,16 @@ namespace SQLite
 		}
 		throw Exception(owner.ctx);
 	}
-    void Stmt::executeMany(DataItr &dp)
+	void Stmt::executeMany(DataItr &dp, Trans::TransactionType aType)
     {
-        Trans trans(owner);
+        Trans trans(owner, aType);
         while(dp.next())
         {
             dp.bind(*this);
             execute();
         }
+		finalize();
+		trans.commit();
     }
 	Data Stmt::value(unsigned idx)
 	{

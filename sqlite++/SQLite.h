@@ -25,8 +25,6 @@
 #   include <Classes.hpp>
 #endif
 
-using namespace std;
-
 namespace SQLite
 {
 #ifdef __BORLANDC__
@@ -45,7 +43,7 @@ namespace SQLite
             Message = m;
             errorCode = sqlite3_errcode(ctx);
         }
-        explicit Exception(const string& error)
+        explicit Exception(const std::string& error)
             : ::Exception(error.c_str())
         {
         }
@@ -86,8 +84,7 @@ namespace SQLite
 #else
     class Exception
     {
-        string error;
-        int errorCode;
+        std::string error;
 
     public:
 
@@ -96,7 +93,7 @@ namespace SQLite
             error.assign(sqlite3_errmsg(ctx));
             errorCode = sqlite3_errcode(ctx);
         }
-        Exception(const string &aMsg)
+        Exception(const std::string &aMsg)
             : error(aMsg), errorCode(-1)
         {}
         Exception(const int aCode)
@@ -124,7 +121,7 @@ namespace SQLite
             }
         }
 
-        const string &getErrorMsg() const
+        const std::string &getErrorMsg() const
         {
             return error;
         }
@@ -155,7 +152,7 @@ namespace SQLite
         void set(int v) { sqlite3_result_int(ctx, v); }
         void set(__int64 v) { sqlite3_result_int64(ctx, v); }
         void set(double v) { sqlite3_result_double(ctx, v); }
-        void set(const string& v)
+        void set(const std::string& v)
         {
             char *t = (char*)malloc(v.length() + 1);
 #if _MSC_VER >= 1400
@@ -178,13 +175,13 @@ namespace SQLite
     {
         friend class DB;
     private:
-        string name;
+        std::string name;
         int args;
 
-        string error;
+        std::string error;
 
     public:
-        Function(string aName, int aArgs);
+        Function(std::string aName, int aArgs);
 
         virtual void operator()(Context &) = 0;
     };
@@ -226,7 +223,7 @@ namespace SQLite
         virtual __int64 asInt64() const = 0;
         virtual double asDouble() const = 0;
         virtual const char* asChar() const = 0;
-        virtual string asString() const = 0;
+        virtual std::string asString() const = 0;
         virtual Blob asBlob() const = 0;
 
         virtual int getType() const = 0;
@@ -235,50 +232,50 @@ namespace SQLite
         operator int() { return asInt(); }
         operator __int64() { return asInt64(); }
         operator double() { return asDouble(); }
-        operator const char*() { return asChar(); }
-        operator string() { return asString(); }
+        operator const char *() { return asChar(); }
+        operator std::string() { return asString(); }
         operator Blob() { return asBlob(); }
 
         bool operator ==(const int v) const { return v == asInt(); }
         bool operator ==(const __int64 v) const { return v == asInt64(); }
         bool operator ==(const double v) const { return v == asDouble(); }
         bool operator ==(const char *v) const { return strcmp(v, asString().c_str()) == 0; }
-        bool operator ==(const string& v) const { return v == asString(); }
+        bool operator ==(const std::string& v) const { return v == asString(); }
         bool operator ==(const Blob &v) const { return v == asBlob(); }
 
         bool operator !=(const int v) const { return v != asInt(); }
         bool operator !=(const __int64 v) const { return v != asInt64(); }
         bool operator !=(const double v) const { return v != asDouble(); }
         bool operator !=(const char *v) const { return strcmp(v, asString().c_str()) != 0; }
-        bool operator !=(const string& v) const { return v != asString(); }
+        bool operator !=(const std::string& v) const { return v != asString(); }
         bool operator !=(const Blob &v) const { return v != asBlob(); }
 
         bool operator <(const int v) const { return v < asInt(); }
         bool operator <(const __int64 v) const { return v < asInt64(); }
         bool operator <(const double v) const { return v < asDouble(); }
         bool operator <(const char *v) const { return strcmp(v, asString().c_str()) == -1; }
-        bool operator <(const string& v) const { return v < asString(); }
+        bool operator <(const std::string& v) const { return v < asString(); }
         bool operator <(const Blob &v) const { return v < asBlob(); }
 
         bool operator >=(const int v) const { return !operator<(v); }
         bool operator >=(const __int64 v) const { return !operator<(v); }
         bool operator >=(const double v) const { return !operator<(v); }
         bool operator >=(const char *v) const { return !operator<(v); }
-        bool operator >=(const string &v) const { return !operator<(v); }
+        bool operator >=(const std::string &v) const { return !operator<(v); }
         bool operator >=(const Blob &v) const { return !operator<(v); }
 
         bool operator >(const int v) const { return v > asInt(); }
         bool operator >(const __int64 v) const { return v > asInt64(); }
         bool operator >(const double v) const { return v > asDouble(); }
         bool operator >(const char *v) const { return strcmp(v, asString().c_str()) == 1; }
-        bool operator >(const string& v) const { return v > asString(); }
+        bool operator >(const std::string& v) const { return v > asString(); }
         bool operator >(const Blob &v) const { return v > asBlob(); }
 
         bool operator <=(const int v) const { return !operator>(v); }
         bool operator <=(const __int64 v) const { return !operator>(v); }
         bool operator <=(const double v) const { return !operator>(v); }
         bool operator <=(const char *v) const { return !operator>(v); }
-        bool operator <=(const string &v) const { return !operator>(v); }
+        bool operator <=(const std::string &v) const { return !operator>(v); }
         bool operator <=(const Blob &v) const { return !operator>(v); }
 
     };
@@ -303,7 +300,7 @@ namespace SQLite
         virtual __int64 asInt64() const;
         virtual double asDouble() const;
         virtual const char *asChar() const;
-        virtual string asString() const;
+        virtual std::string asString() const;
         virtual Blob asBlob() const;
 
         virtual int getType() const;
@@ -320,7 +317,7 @@ namespace SQLite
         virtual __int64 asInt64() const { return sqlite3_value_int64(val); }
         virtual double asDouble() const { return sqlite3_value_double(val); }
         virtual const char* asChar() const { return (const char*)sqlite3_value_text(val); }
-        virtual string asString() const { return string((const char*)sqlite3_value_text(val)); }
+        virtual std::string asString() const { return std::string((const char*)sqlite3_value_text(val)); }
         virtual Blob asBlob() const;
 
         virtual int getType() const { return sqlite3_value_type(val); }
@@ -328,64 +325,12 @@ namespace SQLite
 
     class DB;
     class Stmt;
+
     class DataItr
     {
     public:
         virtual bool next() = 0;
-        virtual bool bind(Stmt& aStmt) = 0;
-    };
-    class Stmt
-    {
-        friend class DB;
-        friend class Data;
-        friend class Exception;
-    private:
-        sqlite3_stmt *stmt;
-
-        string query;
-        string tail;
-
-        DB& owner;
-
-        bool ok, done, result;
-
-    private:
-        Stmt(DB& aOwner, const string &aQuery);
-
-    public:
-        Stmt(const Stmt &c);
-        ~Stmt(void);
-
-        Stmt& operator=(const Stmt &c);
-
-        void prepare();
-        void check();
-        void reset();
-        void finalize();
-
-        void bind(unsigned idx);
-        void bind(unsigned idx, int value);
-        void bind(unsigned idx, __int64 value);
-        void bind(unsigned idx, double value);
-        void bind(unsigned idx, const string& value);
-#ifdef __BORLANDC__
-        void bind(unsigned idx, const AnsiString& value);
-#endif
-        void bind(unsigned idx, void *value, unsigned length);
-
-        const string& getQuery() const { return query; }
-        const string& getTail() const { return tail; }
-
-        unsigned getRowCount();
-        unsigned getColumnCount();
-
-        bool next();
-        void execute() { next(); reset();}
-        void executeMany(DataItr& dataProvider);
-        void rewind() { reset(); }
-
-        Data value(unsigned idx);
-        Data operator[](unsigned idx) { return value(idx); }
+        virtual void bind(Stmt& aStmt) = 0;
     };
 
     class Trans
@@ -405,8 +350,63 @@ namespace SQLite
         void rollback();
     };
 
-    string escape(const string &in);
-    string _cdecl mprintf(const char *, ...);
+
+    class Stmt
+    {
+        friend class DB;
+        friend class Data;
+        friend class Exception;
+    private:
+        sqlite3_stmt *stmt;
+
+        std::string query;
+        std::string tail;
+
+        DB& owner;
+
+        bool ok, done, result;
+
+    private:
+        Stmt(DB& aOwner, const std::string &aQuery);
+
+    public:
+        Stmt(const Stmt &c);
+        ~Stmt(void);
+
+        Stmt& operator=(const Stmt &c);
+
+        void prepare();
+        void check();
+        void reset();
+        void finalize();
+
+        void bind(unsigned idx);
+        void bind(unsigned idx, int value);
+        void bind(unsigned idx, __int64 value);
+        void bind(unsigned idx, double value);
+        void bind(unsigned idx, const std::string& value);
+#ifdef __BORLANDC__
+        void bind(unsigned idx, const AnsiString& value);
+#endif
+        void bind(unsigned idx, void *value, unsigned length);
+
+        const std::string& getQuery() const { return query; }
+        const std::string& getTail() const { return tail; }
+
+        unsigned getRowCount();
+        unsigned getColumnCount();
+
+        bool next();
+        void execute() { next(); reset();}
+        void executeMany(DataItr& dataProvider, Trans::TransactionType aType = Trans::DEFERRED);
+        void rewind() { reset(); }
+
+        Data value(unsigned idx);
+        Data operator[](unsigned idx) { return value(idx); }
+    };
+
+    std::string escape(const std::string &in);
+    std::string _cdecl mprintf(const char *, ...);
 
     class DB
     {
@@ -414,30 +414,27 @@ namespace SQLite
 
     private:
         sqlite3 *ctx;
-        string db;
+        std::string db;
 
-        bool inTrans;
-
-        typedef deque<Function*> FuncList;
+        typedef std::deque<Function*> FuncList;
         FuncList funcs;
 
         void open(const char *aDB);
 
     public:
         explicit DB(const char *aDB);
-        explicit DB(const string& aDB);
+        explicit DB(const std::string& aDB);
 #ifdef __BORLANDC__
         explicit DB(const AnsiString& aDB);
 #endif
         virtual ~DB();
 
-        Stmt prepare(const string &aQuery);
-        void execute(const string &aQuery);
+        Stmt prepare(const std::string &aQuery);
+        void execute(const std::string &aQuery);
+        void executeMany(const std::string &aQuery, DataItr& dataProvider, Trans::TransactionType aType = Trans::DEFERRED);
         void __cdecl execute(const char *aQuery, ...);
 
-        const string& getDB() const { return db; }
-
-        const bool inTransaction() const { return inTrans; }
+        const std::string& getDB() const { return db; }
 
         void registerFunction(Function *aFunc);
     };

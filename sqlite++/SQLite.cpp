@@ -11,7 +11,9 @@
 *************************************************************************
 */
 
-#include "sqlite.h"
+#include "SQLite.h"
+using namespace std;
+
 #ifdef OS_WIN
 #   undef OS_WIN
 #endif
@@ -94,6 +96,7 @@ namespace SQLite
             throw Exception("Transaction alreay finished");
 		}
 		db.execute("COMMIT");
+		finished = true;
 	}
 	void Trans::rollback()
 	{
@@ -102,21 +105,22 @@ namespace SQLite
             throw Exception("Transaction alreay finished");
 		}
 		db.execute("ROLLBACK");
+		finished = true;
 	}
 
 	DB::DB(const char *aDB)
-	: ctx(NULL), inTrans(false)    
+	: ctx(NULL)
     {
         open(aDB);
     }
 	DB::DB(const string& aDB)
-	: ctx(NULL), inTrans(false)
+	: ctx(NULL)
 	{
         open(aDB.c_str());
 	}
 #ifdef __BORLANDC__
     DB::DB(const AnsiString& aDB)
-    : ctx(NULL), inTrans(false)
+    : ctx(NULL)
     {
         open(aDB.c_str());
     }
@@ -167,6 +171,10 @@ namespace SQLite
 		sqlite3_free(o);
         execute(Query);
     }
+	void DB::executeMany(const string &aQuery, DataItr& dataProvider, Trans::TransactionType aType)
+	{
+		prepare(aQuery).executeMany(dataProvider, aType);
+	}
 
 	void DB::registerFunction(Function *aFunc)
 	{

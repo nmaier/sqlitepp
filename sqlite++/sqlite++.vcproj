@@ -180,22 +180,6 @@
 				RelativePath=".\SQLite.h"
 				>
 			</File>
-			<File
-				RelativePath=".\SQLiteData.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SQLiteException.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SQLiteFunction.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SQLiteStmt.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
