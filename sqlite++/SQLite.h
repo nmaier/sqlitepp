@@ -43,17 +43,18 @@ namespace SQLite
                 sqlite3_errcode(ctx)
             );
             Message = m;
+            errorCode = sqlite3_errcode(ctx);
         }
         explicit Exception(const string& error)
             : ::Exception(error.c_str())
         {
         }
         explicit Exception(const AnsiString& error)
-            : errorCode(0), ::Exception(error)
+            : errorCode(-1), ::Exception(error)
         {
         }
         explicit Exception(const char *error)
-            : errorCode(0), ::Exception(error)
+            : errorCode(-1), ::Exception(error)
         {
         }
 
@@ -326,7 +327,13 @@ namespace SQLite
     };
 
     class DB;
-
+    class Stmt;
+    class DataItr
+    {
+    public:
+        virtual bool next() = 0;
+        virtual bool bind(Stmt& aStmt) = 0;
+    };
     class Stmt
     {
         friend class DB;
@@ -338,12 +345,12 @@ namespace SQLite
         string query;
         string tail;
 
-        DB *owner;
+        DB& owner;
 
         bool ok, done, result;
 
     private:
-        Stmt(DB *aOwner, const string &aQuery);
+        Stmt(DB& aOwner, const string &aQuery);
 
     public:
         Stmt(const Stmt &c);
@@ -374,13 +381,29 @@ namespace SQLite
 
         bool next();
         void execute() { next(); reset();}
+        void executeMany(DataItr& dataProvider);
         void rewind() { reset(); }
 
         Data value(unsigned idx);
         Data operator[](unsigned idx) { return value(idx); }
     };
 
-    enum TransactionType {DEFERRED, IMMEDIATE, EXCLUSIVE};
+    class Trans
+    {
+    public:
+        enum TransactionType {DEFERRED, IMMEDIATE, EXCLUSIVE};
+
+    private:
+        bool finished;
+        DB& db;
+        void finish();
+
+    public:
+        Trans(DB& aDB, TransactionType aType = DEFERRED);
+        ~Trans();
+        void commit();
+        void rollback();
+    };
 
     string escape(const string &in);
     string _cdecl mprintf(const char *, ...);
@@ -411,10 +434,6 @@ namespace SQLite
         Stmt prepare(const string &aQuery);
         void execute(const string &aQuery);
         void __cdecl execute(const char *aQuery, ...);
-
-        void begin(TransactionType aType = DEFERRED);
-        void commit();
-        void rollback();
 
         const string& getDB() const { return db; }
 

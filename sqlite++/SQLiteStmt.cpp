@@ -15,7 +15,7 @@
 
 namespace SQLite
 {
-	Stmt::Stmt(DB *aOwner, const string &aQuery)
+	Stmt::Stmt(DB& aOwner, const string &aQuery)
 		: owner(aOwner), query(aQuery), stmt(NULL)
 	{
 		prepare();
@@ -38,12 +38,12 @@ namespace SQLite
 		return *this;
 	}
 	void Stmt::prepare()
-	{
+	{            
 		done = ok = result = false;
 		const char *pTail = NULL;
-		if (sqlite3_prepare(owner->ctx, query.c_str(), (int)query.length(), &stmt, &pTail) != SQLITE_OK)
+		if (sqlite3_prepare(owner.ctx, query.c_str(), (int)query.length(), &stmt, &pTail) != SQLITE_OK)
 		{
-			throw Exception(owner->ctx);
+			throw Exception(owner.ctx);
 		}
 		ok = true;	
 		if (pTail)
@@ -56,7 +56,7 @@ namespace SQLite
 #else
 #	define CHKTHROW
 #endif
-#define SQLOK(x) if (SQLITE_OK != x) throw Exception(owner->ctx);
+#define SQLOK(x) if (SQLITE_OK != x) throw Exception(owner.ctx);
 	void Stmt::check()
 	{
 		CHKTHROW
@@ -145,8 +145,17 @@ namespace SQLite
 		{
 			return (result = true);
 		}
-		throw Exception(owner->ctx);
+		throw Exception(owner.ctx);
 	}
+    void Stmt::executeMany(DataItr &dp)
+    {
+        Trans trans(owner);
+        while(dp.next())
+        {
+            dp.bind(*this);
+            execute();
+        }
+    }
 	Data Stmt::value(unsigned idx)
 	{
 		CHKTHROW

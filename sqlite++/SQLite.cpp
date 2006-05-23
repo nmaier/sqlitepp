@@ -30,7 +30,7 @@ static int busy_handler(void *, int attempts)
 		return 0;
 	}
 #	if defined(OS_WIN)
-	Sleep(attempts * 50);
+	Sleep((attempts + 1) * 100);
 #	elif defined(HAVE_USLEEP) && HAVE_USLEEP
 	usleep(ms*1000);
 #	else
@@ -61,6 +61,47 @@ namespace SQLite
 		string rv(o);
 		sqlite3_free(o);
 		return rv;
+	}
+    Trans::Trans(DB& aDB, TransactionType aType)
+        : db(aDB), finished(false)
+    {
+        string Query("BEGIN ");
+		switch (aType)
+		{
+		case IMMEDIATE:
+			Query.append("IMMEDIATE");
+			break;
+		case EXCLUSIVE:
+			Query.append("EXCLUSIVE");
+			break;
+		default:
+			Query.append("IMMEDIATE");
+			break;
+		}
+		db.execute(Query);
+    }
+    Trans::~Trans()
+    {
+        if (!finished)
+        {
+            rollback();
+        }
+    }
+	void Trans::commit()
+	{
+		if (finished)
+		{
+            throw Exception("Transaction alreay finished");
+		}
+		db.execute("COMMIT");
+	}
+	void Trans::rollback()
+	{
+		if (finished)
+		{
+            throw Exception("Transaction alreay finished");
+		}
+		db.execute("ROLLBACK");
 	}
 
 	DB::DB(const char *aDB)
@@ -109,7 +150,7 @@ namespace SQLite
 
 	Stmt DB::prepare(const string &aQuery)
 	{
-		return Stmt(this, aQuery);
+		return Stmt(*this, aQuery);
 	}
 	void DB::execute(const string &aQuery)
 	{
@@ -126,47 +167,6 @@ namespace SQLite
 		sqlite3_free(o);
         execute(Query);
     }
-
-	void DB::begin(TransactionType aType)
-	{
-		if (inTrans)
-		{
-			throw Exception("Already in Transaction");
-		}
-		string Query("BEGIN ");
-		switch (aType)
-		{
-		case IMMEDIATE:
-			Query.append("IMMEDIATE");
-			break;
-		case EXCLUSIVE:
-			Query.append("EXCLUSIVE");
-			break;
-		default:
-			Query.append("IMMEDIATE");
-			break;
-		}
-		execute(Query);
-		inTrans = true;
-	}
-	void DB::commit()
-	{
-		if (!inTrans)
-		{
-			throw Exception("Not in Transaction");
-		}
-		execute("COMMIT");
-		inTrans = false;
-	}
-	void DB::rollback()
-	{
-		if (!inTrans)
-		{
-			throw Exception("Not in Transaction");
-		}
-		execute("ROLLBACK");
-		inTrans = false;
-	}
 
 	void DB::registerFunction(Function *aFunc)
 	{
