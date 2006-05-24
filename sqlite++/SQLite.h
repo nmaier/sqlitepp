@@ -225,7 +225,9 @@ namespace SQLite
         virtual const char* asChar() const = 0;
         virtual std::string asString() const = 0;
         virtual Blob asBlob() const = 0;
-
+#ifdef __BORLANDC__
+        virtual AnsiString asAString() const = 0;
+#endif
         virtual int getType() const = 0;
 
     public:
@@ -234,6 +236,9 @@ namespace SQLite
         operator double() { return asDouble(); }
         operator const char *() { return asChar(); }
         operator std::string() { return asString(); }
+#ifdef __BORLANDC__
+        operator AnsiString() { return asAString(); }
+#endif
         operator Blob() { return asBlob(); }
 
         bool operator ==(const int v) const { return v == asInt(); }
@@ -241,6 +246,9 @@ namespace SQLite
         bool operator ==(const double v) const { return v == asDouble(); }
         bool operator ==(const char *v) const { return strcmp(v, asString().c_str()) == 0; }
         bool operator ==(const std::string& v) const { return v == asString(); }
+#ifdef __BORLANDC__
+        bool operator ==(const AnsiString& v) const { return v == asAString(); }
+#endif
         bool operator ==(const Blob &v) const { return v == asBlob(); }
 
         bool operator !=(const int v) const { return v != asInt(); }
@@ -248,6 +256,9 @@ namespace SQLite
         bool operator !=(const double v) const { return v != asDouble(); }
         bool operator !=(const char *v) const { return strcmp(v, asString().c_str()) != 0; }
         bool operator !=(const std::string& v) const { return v != asString(); }
+#ifdef __BORLANDC__
+        bool operator !=(const AnsiString& v) const { return v != asAString(); }
+#endif
         bool operator !=(const Blob &v) const { return v != asBlob(); }
 
         bool operator <(const int v) const { return v < asInt(); }
@@ -255,6 +266,9 @@ namespace SQLite
         bool operator <(const double v) const { return v < asDouble(); }
         bool operator <(const char *v) const { return strcmp(v, asString().c_str()) == -1; }
         bool operator <(const std::string& v) const { return v < asString(); }
+#ifdef __BORLANDC__
+        bool operator <(const AnsiString& v) const { return v < asAString(); }
+#endif
         bool operator <(const Blob &v) const { return v < asBlob(); }
 
         bool operator >=(const int v) const { return !operator<(v); }
@@ -262,6 +276,9 @@ namespace SQLite
         bool operator >=(const double v) const { return !operator<(v); }
         bool operator >=(const char *v) const { return !operator<(v); }
         bool operator >=(const std::string &v) const { return !operator<(v); }
+#ifdef __BORLANDC__
+        bool operator >=(const AnsiString &v) const { return !operator<(v); }
+#endif
         bool operator >=(const Blob &v) const { return !operator<(v); }
 
         bool operator >(const int v) const { return v > asInt(); }
@@ -269,6 +286,9 @@ namespace SQLite
         bool operator >(const double v) const { return v > asDouble(); }
         bool operator >(const char *v) const { return strcmp(v, asString().c_str()) == 1; }
         bool operator >(const std::string& v) const { return v > asString(); }
+#ifdef __BORLANDC__
+        bool operator >(const AnsiString& v) const { return v > asAString(); }
+#endif
         bool operator >(const Blob &v) const { return v > asBlob(); }
 
         bool operator <=(const int v) const { return !operator>(v); }
@@ -276,6 +296,9 @@ namespace SQLite
         bool operator <=(const double v) const { return !operator>(v); }
         bool operator <=(const char *v) const { return !operator>(v); }
         bool operator <=(const std::string &v) const { return !operator>(v); }
+#ifdef __BORLANDC__
+        bool operator <=(const AnsiString &v) const { return !operator>(v); }
+#endif
         bool operator <=(const Blob &v) const { return !operator>(v); }
 
     };
@@ -301,6 +324,9 @@ namespace SQLite
         virtual double asDouble() const;
         virtual const char *asChar() const;
         virtual std::string asString() const;
+#ifdef __BORLANDC__
+        virtual AnsiString asAString() const;
+#endif
         virtual Blob asBlob() const;
 
         virtual int getType() const;
@@ -318,6 +344,9 @@ namespace SQLite
         virtual double asDouble() const { return sqlite3_value_double(val); }
         virtual const char* asChar() const { return (const char*)sqlite3_value_text(val); }
         virtual std::string asString() const { return std::string((const char*)sqlite3_value_text(val)); }
+#ifdef __BORLANDC__
+        virtual AnsiString asAString() const { return AnsiString((const char*)sqlite3_value_text(val)); }
+#endif
         virtual Blob asBlob() const;
 
         virtual int getType() const { return sqlite3_value_type(val); }

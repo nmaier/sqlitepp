@@ -76,6 +76,18 @@ namespace SQLite
 		}
 		return rv;
 	}
+#ifdef __BORLANDC__
+	AnsiString Data::asAString() const
+	{
+		AnsiString rv;
+		const unsigned char *buf = sqlite3_column_text(stmt->stmt, (int)idx);
+		if (buf)
+		{
+			rv = AnsiString((const char*)buf);
+		}
+		return rv;
+	}
+#endif
 	Blob Data::asBlob() const
 	{
 		return Blob(
