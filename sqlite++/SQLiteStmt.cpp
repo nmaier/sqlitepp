@@ -172,4 +172,30 @@ namespace SQLite
 		}
 		return Data(this, idx);
 	}
+
+    Finalizer::Finalizer(Stmt& aStmt)
+    : stmt(aStmt)
+    {
+        try
+        {
+            stmt.execute();
+        } catch (SQLite::Exception &ex)
+        {
+            try { stmt.finalize(); } catch (SQLite::Exception &ex) {}
+            throw;
+        }
+    }
+    Finalizer::~Finalizer()
+    {
+        try { stmt.finalize(); } catch (SQLite::Exception &ex) {}
+    }
+
+    Resetter::Resetter(Stmt& aStmt)
+    : stmt(aStmt)
+    {
+    }
+    Resetter::~Resetter()
+    {
+        try { stmt.reset(); } catch (SQLite::Exception &ex) {}
+    }
 }

@@ -155,19 +155,11 @@ namespace SQLite
         void set(double v) { sqlite3_result_double(ctx, v); }
         void set(const std::string& v)
         {
-            char *t = (char*)malloc(v.length() + 1);
-#if _MSC_VER >= 1400
-            strcpy_s(t, v.length() + 1, v.c_str());
-#else
-            strcpy(t, v.c_str());
-#endif
-            sqlite3_result_text(ctx, t, (int)v.length(), free);
+            sqlite3_result_text(ctx, v.c_str(), (int)v.length(), SQLITE_TRANSIENT);
         }
         void set(void *data, unsigned length)
         {
-            void *p = malloc(length);
-            memcpy(p, data, length);
-            sqlite3_result_blob(ctx, data, (int)length, free);
+            sqlite3_result_blob(ctx, data, (int)length, SQLITE_TRANSIENT);
         }
         Value operator[](int idx);
     };
@@ -198,7 +190,7 @@ namespace SQLite
             : data(aData), length(aLength)
         {}
 
-        operator const void*() const { return data; }
+        operator const void *() const { return data; }
         const unsigned getLength() const { return length; }
         const void *getData() const { return data; }
 
@@ -435,6 +427,24 @@ namespace SQLite
         Data operator[](unsigned idx) { return value(idx); }
     };
 
+    class Finalizer
+    {
+    private:
+        Stmt& stmt;
+    public:
+        Finalizer(Stmt& aStmt);
+        ~Finalizer();
+    };
+
+    class Resetter
+    {
+    private:
+        Stmt& stmt;
+    public:
+        Resetter(Stmt& aStmt);
+        ~Resetter();
+    };
+
     std::string escape(const std::string &in);
     std::string _cdecl mprintf(const char *, ...);
 
@@ -467,6 +477,9 @@ namespace SQLite
         const std::string& getDB() const { return db; }
 
         void registerFunction(Function *aFunc);
+
+        __int64 lastInsertId() const ;
+
     };
     class MemoryDB : public DB
     {

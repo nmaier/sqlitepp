@@ -27,12 +27,12 @@ using namespace std;
 
 static int busy_handler(void *, int attempts)
 {
-	if (attempts > 10)
+	if (attempts > 100)
 	{
 		return 0;
 	}
 #	if defined(OS_WIN)
-	Sleep((attempts + 1) * 100);
+	Sleep(100);
 #	elif defined(HAVE_USLEEP) && HAVE_USLEEP
 	usleep(ms*1000);
 #	else
@@ -175,6 +175,11 @@ namespace SQLite
 	{
 		prepare(aQuery).executeMany(dataProvider, aType);
 	}
+
+    __int64 DB::lastInsertId() const
+    {
+        return sqlite3_last_insert_rowid(ctx);
+    }
 
 	void DB::registerFunction(Function *aFunc)
 	{
