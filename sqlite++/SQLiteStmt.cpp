@@ -91,12 +91,12 @@ namespace SQLite
 		CHKTHROW;
 		SQLOK(sqlite3_bind_int(stmt, idx, value));
 	}
-	void Stmt::bind(unsigned idx, __int64 value)
+	void Stmt::bind(unsigned idx, const __int64& value)
 	{
 		CHKTHROW;
 		SQLOK(sqlite3_bind_int64(stmt, idx, value));
 	}
-	void Stmt::bind(unsigned idx, double value)
+	void Stmt::bind(unsigned idx, const double& value)
 	{
 		CHKTHROW;
 		SQLOK(sqlite3_bind_double(stmt, idx, value));
@@ -113,7 +113,7 @@ namespace SQLite
         SQLOK(sqlite3_bind_text(stmt, idx, value.c_str(), value.Length(), SQLITE_TRANSIENT));
     }
 #endif
-	void Stmt::bind(unsigned idx, void *value, unsigned length)
+	void Stmt::bind(unsigned idx, const void *value, unsigned length)
 	{
 		CHKTHROW;
 		SQLOK(sqlite3_bind_blob(stmt, idx, value, length, SQLITE_TRANSIENT));

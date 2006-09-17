@@ -27,18 +27,12 @@ using namespace std;
 
 static int busy_handler(void *, int attempts)
 {
-	if (attempts > 100)
+	if (attempts > 10000)
 	{
 		return 0;
 	}
-#	if defined(OS_WIN)
-	Sleep(100);
-#	elif defined(HAVE_USLEEP) && HAVE_USLEEP
-	usleep(ms*1000);
-#	else
-	sleep(((attempts * 50) + 999) / 1000);
-#	endif
-	
+	Sleep(0);
+
 	return 1;
 }
 

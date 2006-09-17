@@ -150,14 +150,14 @@ namespace SQLite
         {}
         void error(const char *error) { sqlite3_result_error(ctx, error, (int)strlen(error)); }
         void set() { sqlite3_result_null(ctx); }
-        void set(int v) { sqlite3_result_int(ctx, v); }
-        void set(__int64 v) { sqlite3_result_int64(ctx, v); }
-        void set(double v) { sqlite3_result_double(ctx, v); }
+        void set(const int v) { sqlite3_result_int(ctx, v); }
+        void set(const __int64& v) { sqlite3_result_int64(ctx, v); }
+        void set(const double& v) { sqlite3_result_double(ctx, v); }
         void set(const std::string& v)
         {
             sqlite3_result_text(ctx, v.c_str(), (int)v.length(), SQLITE_TRANSIENT);
         }
-        void set(void *data, unsigned length)
+        void set(const void *data, const unsigned length)
         {
             sqlite3_result_blob(ctx, data, (int)length, SQLITE_TRANSIENT);
         }
@@ -174,7 +174,7 @@ namespace SQLite
         std::string error;
 
     public:
-        Function(std::string aName, int aArgs);
+        Function(const std::string& aName, int aArgs);
 
         virtual void operator()(Context &) = 0;
     };
@@ -224,15 +224,15 @@ namespace SQLite
         virtual int getType() const = 0;
 
     public:
-        operator int() { return asInt(); }
-        operator __int64() { return asInt64(); }
-        operator double() { return asDouble(); }
-        operator const char *() { return asChar(); }
-        operator std::string() { return asString(); }
+        operator int() const { return asInt(); }
+        operator __int64() const { return asInt64(); }
+        operator double() const { return asDouble(); }
+        operator const char *() const { return asChar(); }
+        operator std::string() const { return asString(); }
 #ifdef __BORLANDC__
-        operator AnsiString() { return asAString(); }
+        operator AnsiString() const;
 #endif
-        operator Blob() { return asBlob(); }
+        operator Blob() const { return asBlob(); }
 
         bool operator ==(const int v) const { return v == asInt(); }
         bool operator ==(const __int64 v) const { return v == asInt64(); }
@@ -336,9 +336,9 @@ namespace SQLite
         virtual __int64 asInt64() const { return sqlite3_value_int64(val); }
         virtual double asDouble() const { return sqlite3_value_double(val); }
         virtual const char* asChar() const { return (const char*)sqlite3_value_text(val); }
-        virtual std::string asString() const { return std::string((const char*)sqlite3_value_text(val)); }
+        virtual std::string asString() const;
 #ifdef __BORLANDC__
-        virtual AnsiString asAString() const { return AnsiString((const char*)sqlite3_value_text(val)); }
+        virtual AnsiString asAString() const;
 #endif
         virtual Blob asBlob() const;
 
@@ -403,14 +403,14 @@ namespace SQLite
         void finalize();
 
         void bind(unsigned idx);
-        void bind(unsigned idx, int value);
-        void bind(unsigned idx, __int64 value);
-        void bind(unsigned idx, double value);
+        void bind(unsigned idx, const int value);
+        void bind(unsigned idx, const __int64& value);
+        void bind(unsigned idx, const double& value);
         void bind(unsigned idx, const std::string& value);
 #ifdef __BORLANDC__
         void bind(unsigned idx, const AnsiString& value);
 #endif
-        void bind(unsigned idx, void *value, unsigned length);
+        void bind(unsigned idx, const void *value, const unsigned length);
 
         const std::string& getQuery() const { return query; }
         const std::string& getTail() const { return tail; }

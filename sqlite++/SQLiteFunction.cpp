@@ -26,7 +26,7 @@ namespace SQLite
 		return Value(vals[idx]);
 	}
 
-	Function::Function(string aName, int aArgs)
+	Function::Function(const string& aName, int aArgs)
 	: name(aName), args(aArgs)
 	{}
 }
