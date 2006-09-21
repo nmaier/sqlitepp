@@ -390,7 +390,9 @@ namespace SQLite
 
     private:
         Stmt(DB& aOwner, const std::string &aQuery);
-
+#ifdef __BORLANDC__
+        Stmt(DB& aOwner, const AnsiString &aQuery);
+#endif
     public:
         Stmt(const Stmt &c);
         ~Stmt(void);
@@ -470,8 +472,17 @@ namespace SQLite
         virtual ~DB();
 
         Stmt prepare(const std::string &aQuery);
+        Stmt prepare(const char *aQuery);        
         void execute(const std::string &aQuery);
         void executeMany(const std::string &aQuery, DataItr& dataProvider, Trans::TransactionType aType = Trans::DEFERRED);
+
+#ifdef __BORLANDC__
+        Stmt prepare(const AnsiString &aQuery);
+        void execute(const AnsiString &aQuery);
+        void executeMany(const AnsiString &aQuery, DataItr& dataProvider, Trans::TransactionType aType = Trans::DEFERRED);
+
+#endif
+
         void __cdecl execute(const char *aQuery, ...);
 
         const std::string& getDB() const { return db; }

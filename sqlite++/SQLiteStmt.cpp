@@ -21,7 +21,12 @@ namespace SQLite
 	{
 		prepare();
 	}
-	Stmt::Stmt(const Stmt &c)
+	Stmt::Stmt(DB& aOwner, const AnsiString &aQuery)
+		: owner(aOwner), query(aQuery.c_str()), stmt(NULL)
+	{
+		prepare();
+	}
+    Stmt::Stmt(const Stmt &c)
 		: owner(c.owner), query(c.query), stmt(NULL)
 	{
 		prepare();

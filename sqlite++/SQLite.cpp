@@ -150,10 +150,34 @@ namespace SQLite
 	{
 		return Stmt(*this, aQuery);
 	}
+	Stmt DB::prepare(const char *aQuery)
+	{
+		return Stmt(*this, string(aQuery));
+	}
 	void DB::execute(const string &aQuery)
 	{
 		prepare(aQuery).execute();
 	}
+	void DB::executeMany(const string &aQuery, DataItr& dataProvider, Trans::TransactionType aType)
+	{
+		prepare(aQuery).executeMany(dataProvider, aType);
+	}
+
+#ifdef __BORLANDC__
+	Stmt DB::prepare(const AnsiString &aQuery)
+	{
+		return Stmt(*this, aQuery);
+	}
+	void DB::execute(const AnsiString &aQuery)
+	{
+		prepare(aQuery).execute();
+	}
+	void DB::executeMany(const AnsiString &aQuery, DataItr& dataProvider, Trans::TransactionType aType)
+	{
+		prepare(aQuery).executeMany(dataProvider, aType);
+	}
+#endif
+
     void __cdecl DB::execute(const char* aQuery, ...)
     {
 		va_list ap;
@@ -165,10 +189,7 @@ namespace SQLite
 		sqlite3_free(o);
         execute(Query);
     }
-	void DB::executeMany(const string &aQuery, DataItr& dataProvider, Trans::TransactionType aType)
-	{
-		prepare(aQuery).executeMany(dataProvider, aType);
-	}
+
 
     __int64 DB::lastInsertId() const
     {
