@@ -27,13 +27,19 @@ using namespace std;
 
 static int busy_handler(void *, int attempts)
 {
-	if (attempts > 10000)
+    if (attempts < 1000)
+    {
+        // nasty. makes os scheduler context-switch
+        Sleep(0);
+        return 1;
+    }
+	else if (attempts < 1200)
 	{
-		return 0;
+        Sleep(100);
+		return 1;
 	}
-	Sleep(0);
 
-	return 1;
+    return 0;
 }
 
 static void func_handler(sqlite3_context *ctx, int args, sqlite3_value **vals)

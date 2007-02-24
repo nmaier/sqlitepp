@@ -12,6 +12,9 @@
 */
 
 #include "SQLite.h"
+
+#include <stdio.h>
+
 using namespace std;
 
 namespace SQLite
@@ -151,6 +154,17 @@ namespace SQLite
 		{
 			return (result = true);
 		}
+#if 0
+        FILE *fp = fopen("sqlite.except.log", "a");
+        fprintf(
+            fp,
+            "[\n[%s}\n%d: %s\n]\n",
+            query.c_str(),
+            sqlite3_errcode(owner.ctx),
+            sqlite3_errmsg(owner.ctx)
+        );
+        fclose(fp);
+#endif
 		throw Exception(owner.ctx);
 	}
 	void Stmt::executeMany(DataItr &dp, Trans::TransactionType aType)

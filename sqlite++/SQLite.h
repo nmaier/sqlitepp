@@ -49,11 +49,11 @@ namespace SQLite
         {
         }
         explicit Exception(const AnsiString& error)
-            : errorCode(-1), ::Exception(error)
+            : errorCode(-1), Sysutils::Exception(error)
         {
         }
         explicit Exception(const char *error)
-            : errorCode(-1), ::Exception(error)
+            : errorCode(-1), Sysutils::Exception(error)
         {
         }
 

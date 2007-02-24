@@ -18,8 +18,8 @@
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
     <LINKER value="TLib"/>
-    <USERDEFINES value=""/>
-    <SYSDEFINES value="_RTLDLL;NO_STRICT"/>
+    <USERDEFINES value="NDEBUG"/>
+    <SYSDEFINES value="NO_STRICT"/>
     <MAINSOURCE value="sqlitepp.bpf"/>
     <INCLUDEPATH value="..\..\..;..;$(BCB)\include;$(BCB)\include\vcl;E:\CBuilder6\Include\sqlite"/>
     <LIBPATH value="..\..\..;..;$(BCB)\lib\obj;$(BCB)\lib"/>
@@ -29,9 +29,9 @@
   </MACROS>
   <OPTIONS>
     <IDLCFLAGS value="-I..\..\.. -I.. -I$(BCB)\include -I$(BCB)\include\vcl 
-      -IE:\CBuilder6\Include\sqlite -src_suffix cpp -boa"/>
-    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -Vms -Vx -Ve -xf -RT- -Vmp -ff -X -a8 -6 
-      -b- -d -k- -vi -c -tW -tWM"/>
+      -IE:\CBuilder6\Include\sqlite -src_suffix cpp -DNDEBUG -boa"/>
+    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -Q -Vx -Ve -xf -RT- -Vmp -ff -X -a8 -6 -b 
+      -d -k- -vi -c -tW -tWM"/>
     <PFLAGS value="-$Y- -$L- -$I- -$D- -$C- -$A8 -v -JPHNE -M"/>
     <AFLAGS value="/mx /w2 /zn"/>
     <LFLAGS value=""/>
@@ -83,25 +83,29 @@ ProductVersion=1.0.0.0
 Comments=
 
 [HistoryLists\hlIncludePath]
-Count=4
-Item0=..;$(BCB)\include;$(BCB)\include\vcl;E:\CBuilder6\Include\sqlite
-Item1=..\;$(BCB)\include;$(BCB)\include\vcl;E:\CBuilder6\Include\sqlite
-Item2=$(BCB)\include;$(BCB)\include\vcl;E:\CBuilder6\Include\sqlite
-Item3=$(BCB)\include;$(BCB)\include\vcl
+Count=5
+Item0=..\..\..;..;$(BCB)\include;$(BCB)\include\vcl;E:\CBuilder6\Include\sqlite
+Item1=..;$(BCB)\include;$(BCB)\include\vcl;E:\CBuilder6\Include\sqlite
+Item2=..\;$(BCB)\include;$(BCB)\include\vcl;E:\CBuilder6\Include\sqlite
+Item3=$(BCB)\include;$(BCB)\include\vcl;E:\CBuilder6\Include\sqlite
+Item4=$(BCB)\include;$(BCB)\include\vcl
 
 [HistoryLists\hlLibraryPath]
-Count=3
-Item0=..;$(BCB)\lib\obj;$(BCB)\lib
-Item1=..\;$(BCB)\lib\obj;$(BCB)\lib
-Item2=$(BCB)\lib\obj;$(BCB)\lib
+Count=4
+Item0=..\..\..;..;$(BCB)\lib\obj;$(BCB)\lib
+Item1=..;$(BCB)\lib\obj;$(BCB)\lib
+Item2=..\;$(BCB)\lib\obj;$(BCB)\lib
+Item3=$(BCB)\lib\obj;$(BCB)\lib
 
 [HistoryLists\hlDebugSourcePath]
 Count=1
 Item0=$(BCB)\source\vcl
 
 [HistoryLists\hlConditionals]
-Count=1
-Item0=_DEBUG
+Count=3
+Item0=NDEBUG
+Item1=NDEBUG;_DEBUG
+Item2=_DEBUG
 
 [HistoryLists\hlTlibPageSize]
 Count=1
