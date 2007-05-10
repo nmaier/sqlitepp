@@ -23,7 +23,7 @@ using namespace std;
 #	define os_sleep Sleep
 #else
 #   include <unistd.h>
-#	define os_sleep sleep
+#	define os_sleep usleep
 #endif
 
 static int busy_handler(void *, int attempts)
