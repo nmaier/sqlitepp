@@ -197,18 +197,34 @@ namespace SQLite
     Finalizer::Finalizer(Stmt& aStmt)
     : stmt(aStmt)
     {
-        try
-        {
+        try {
             stmt.execute();
-        } catch (SQLite::Exception &ex)
-        {
-            try { stmt.finalize(); } catch (SQLite::Exception) {}
+#ifdef __BORLANDC__
+        } catch (SQLite::Exception &ex) {
+#else
+        } catch (SQLite::Exception) {
+#endif
+            try {
+                stmt.finalize();
+#ifdef __BORLANDC__
+            } catch (SQLite::Exception &ex) {
+#else
+            } catch (SQLite::Exception) {
+#endif
+            }
             throw;
         }
     }
     Finalizer::~Finalizer()
     {
-        try { stmt.finalize(); } catch (SQLite::Exception) {}
+        try {
+            stmt.finalize();
+#ifdef __BORLANDC__
+        } catch (SQLite::Exception &ex) {
+#else
+        } catch (SQLite::Exception) {
+#endif
+        }
     }
 
     Resetter::Resetter(Stmt& aStmt)
@@ -217,6 +233,13 @@ namespace SQLite
     }
     Resetter::~Resetter()
     {
-        try { stmt.reset(); } catch (SQLite::Exception) {}
+        try {
+            stmt.reset();
+#ifdef __BORLANDC__
+        } catch (SQLite::Exception &ex) {
+#else
+        } catch (SQLite::Exception) {
+#endif
+        }
     }
 }

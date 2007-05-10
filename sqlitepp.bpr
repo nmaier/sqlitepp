@@ -4,7 +4,8 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="sqlitepp.lib"/>
-    <OBJFILES value="SQLite.obj SQLiteData.obj SQLiteFunction.obj SQLiteStmt.obj StringConv.obj"/>
+    <OBJFILES value="Link\SQLite.obj Link\SQLiteData.obj Link\SQLiteFunction.obj 
+      Link\SQLiteStmt.obj"/>
     <RESFILES value=""/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -32,7 +33,7 @@
       -IE:\CBuilder6\Include\sqlite -src_suffix cpp -DNDEBUG -boa"/>
     <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -Q -Vx -Ve -xf -RT- -Vmp -ff -X -a8 -6 -b 
       -d -k- -vi -c -tW -tWM"/>
-    <PFLAGS value="-$Y- -$L- -$I- -$D- -$C- -$A8 -v -JPHNE -M"/>
+    <PFLAGS value="-N2Link -N0Link -$Y- -$L- -$I- -$D- -$C- -$A8 -v -JPHNE -M"/>
     <AFLAGS value="/mx /w2 /zn"/>
     <LFLAGS value=""/>
     <OTHERFILES value=""/>
@@ -49,7 +50,6 @@
       <FILE FILENAME="SQLiteFunction.cpp" FORMNAME="" UNITNAME="SQLiteFunction" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="SQLiteStmt.cpp" FORMNAME="" UNITNAME="SQLiteStmt" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="SQLite.h" FORMNAME="" UNITNAME="SQLite.h" CONTAINERID="" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="StringConv.cpp" FORMNAME="" UNITNAME="StringConv" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -106,6 +106,10 @@ Count=3
 Item0=NDEBUG
 Item1=NDEBUG;_DEBUG
 Item2=_DEBUG
+
+[HistoryLists\hlIntOutputDir]
+Count=1
+Item0=Link
 
 [HistoryLists\hlTlibPageSize]
 Count=1
