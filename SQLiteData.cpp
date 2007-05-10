@@ -77,8 +77,8 @@ namespace SQLite
 		return rv;
 	}
 #ifdef __BORLANDC__
-    BaseData::operator AnsiString() const { return asAString(); }
-    
+	BaseData::operator AnsiString() const { return asAString(); }
+	
 	AnsiString Data::asAString() const
 	{
 		AnsiString rv;
@@ -103,7 +103,7 @@ namespace SQLite
 		return sqlite3_column_type(stmt->stmt, idx);
 	}
 
-    std::string Value::asString() const { return std::string((const char*)sqlite3_value_text(val)); }
+	std::string Value::asString() const { return std::string((const char*)sqlite3_value_text(val)); }
 
 	Blob Value::asBlob() const
 	{
@@ -113,6 +113,6 @@ namespace SQLite
 			);
 	}
 #ifdef __BORLANDC__
-    AnsiString Value::asAString() const { return AnsiString((const char*)sqlite3_value_text(val)); }
+	AnsiString Value::asAString() const { return AnsiString((const char*)sqlite3_value_text(val)); }
 #endif
 }

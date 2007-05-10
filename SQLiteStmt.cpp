@@ -49,7 +49,7 @@ namespace SQLite
 		return *this;
 	}
 	void Stmt::prepare()
-	{            
+	{			
 		done = ok = result = false;
 		const char *pTail = NULL;
 		if (sqlite3_prepare(owner.ctx, query.c_str(), (int)query.length(), &stmt, &pTail) != SQLITE_OK)
@@ -117,11 +117,11 @@ namespace SQLite
 		SQLOK(sqlite3_bind_text(stmt, idx, value.c_str(), (int)value.length(), SQLITE_TRANSIENT));
 	}
 #ifdef __BORLANDC__
-    void Stmt::bind(unsigned idx, const AnsiString& value)
-    {
-        CHKTHROW;
-        SQLOK(sqlite3_bind_text(stmt, idx, value.c_str(), value.Length(), SQLITE_TRANSIENT));
-    }
+	void Stmt::bind(unsigned idx, const AnsiString& value)
+	{
+		CHKTHROW;
+		SQLOK(sqlite3_bind_text(stmt, idx, value.c_str(), value.Length(), SQLITE_TRANSIENT));
+	}
 #endif
 	void Stmt::bind(unsigned idx, const void *value, unsigned length)
 	{
@@ -157,29 +157,29 @@ namespace SQLite
 			return (result = true);
 		}
 #if 0
-        FILE *fp = fopen("sqlite.except.log", "a");
-        fprintf(
-            fp,
-            "[\n[%s}\n%d: %s\n]\n",
-            query.c_str(),
-            sqlite3_errcode(owner.ctx),
-            sqlite3_errmsg(owner.ctx)
-        );
-        fclose(fp);
+		FILE *fp = fopen("sqlite.except.log", "a");
+		fprintf(
+			fp,
+			"[\n[%s}\n%d: %s\n]\n",
+			query.c_str(),
+			sqlite3_errcode(owner.ctx),
+			sqlite3_errmsg(owner.ctx)
+		);
+		fclose(fp);
 #endif
 		throw Exception(owner.ctx);
 	}
 	void Stmt::executeMany(DataItr &dp, Trans::TransactionType aType)
-    {
-        Trans trans(owner, aType);
-        while(dp.next())
-        {
-            dp.bind(*this);
-            execute();
-        }
+	{
+		Trans trans(owner, aType);
+		while(dp.next())
+		{
+			dp.bind(*this);
+			execute();
+		}
 		finalize();
 		trans.commit();
-    }
+	}
 	Data Stmt::value(unsigned idx)
 	{
 		CHKTHROW
@@ -194,52 +194,52 @@ namespace SQLite
 		return Data(this, idx);
 	}
 
-    Finalizer::Finalizer(Stmt& aStmt)
-    : stmt(aStmt)
-    {
-        try {
-            stmt.execute();
+	Finalizer::Finalizer(Stmt& aStmt)
+	: stmt(aStmt)
+	{
+		try {
+			stmt.execute();
 #ifdef __BORLANDC__
-        } catch (SQLite::Exception &ex) {
+		} catch (SQLite::Exception &ex) {
 #else
-        } catch (SQLite::Exception) {
+		} catch (SQLite::Exception) {
 #endif
-            try {
-                stmt.finalize();
+			try {
+				stmt.finalize();
 #ifdef __BORLANDC__
-            } catch (SQLite::Exception &ex) {
+			} catch (SQLite::Exception &ex) {
 #else
-            } catch (SQLite::Exception) {
+			} catch (SQLite::Exception) {
 #endif
-            }
-            throw;
-        }
-    }
-    Finalizer::~Finalizer()
-    {
-        try {
-            stmt.finalize();
+			}
+			throw;
+		}
+	}
+	Finalizer::~Finalizer()
+	{
+		try {
+			stmt.finalize();
 #ifdef __BORLANDC__
-        } catch (SQLite::Exception &ex) {
+		} catch (SQLite::Exception &ex) {
 #else
-        } catch (SQLite::Exception) {
+		} catch (SQLite::Exception) {
 #endif
-        }
-    }
+		}
+	}
 
-    Resetter::Resetter(Stmt& aStmt)
-    : stmt(aStmt)
-    {
-    }
-    Resetter::~Resetter()
-    {
-        try {
-            stmt.reset();
+	Resetter::Resetter(Stmt& aStmt)
+	: stmt(aStmt)
+	{
+	}
+	Resetter::~Resetter()
+	{
+		try {
+			stmt.reset();
 #ifdef __BORLANDC__
-        } catch (SQLite::Exception &ex) {
+		} catch (SQLite::Exception &ex) {
 #else
-        } catch (SQLite::Exception) {
+		} catch (SQLite::Exception) {
 #endif
-        }
-    }
+		}
+	}
 }

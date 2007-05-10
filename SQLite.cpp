@@ -27,19 +27,19 @@ using namespace std;
 
 static int busy_handler(void *, int attempts)
 {
-    if (attempts < 1000)
-    {
-        // nasty. makes os scheduler context-switch
-        Sleep(0);
-        return 1;
-    }
+	if (attempts < 1000)
+	{
+		// nasty. makes os scheduler context-switch
+		Sleep(0);
+		return 1;
+	}
 	else if (attempts < 1200)
 	{
-        Sleep(100);
+		Sleep(100);
 		return 1;
 	}
 
-    return 0;
+	return 0;
 }
 
 static void func_handler(sqlite3_context *ctx, int args, sqlite3_value **vals)
@@ -64,10 +64,10 @@ namespace SQLite
 		sqlite3_free(o);
 		return rv;
 	}
-    Trans::Trans(DB& aDB, TransactionType aType)
-        : db(aDB), finished(false)
-    {
-        string Query("BEGIN ");
+	Trans::Trans(DB& aDB, TransactionType aType)
+		: db(aDB), finished(false)
+	{
+		string Query("BEGIN ");
 		switch (aType)
 		{
 		case IMMEDIATE:
@@ -81,19 +81,19 @@ namespace SQLite
 			break;
 		}
 		db.execute(Query);
-    }
-    Trans::~Trans()
-    {
-        if (!finished)
-        {
-            rollback();
-        }
-    }
+	}
+	Trans::~Trans()
+	{
+		if (!finished)
+		{
+			rollback();
+		}
+	}
 	void Trans::commit()
 	{
 		if (finished)
 		{
-            throw Exception("Transaction alreay finished");
+			throw Exception("Transaction alreay finished");
 		}
 		db.execute("COMMIT");
 		finished = true;
@@ -102,7 +102,7 @@ namespace SQLite
 	{
 		if (finished)
 		{
-            throw Exception("Transaction alreay finished");
+			throw Exception("Transaction alreay finished");
 		}
 		db.execute("ROLLBACK");
 		finished = true;
@@ -110,24 +110,24 @@ namespace SQLite
 
 	DB::DB(const char *aDB)
 	: ctx(NULL)
-    {
-        open(aDB);
-    }
+	{
+		open(aDB);
+	}
 	DB::DB(const string& aDB)
 	: ctx(NULL)
 	{
-        open(aDB.c_str());
+		open(aDB.c_str());
 	}
 #ifdef __BORLANDC__
-    DB::DB(const AnsiString& aDB)
-    : ctx(NULL)
-    {
-        open(aDB.c_str());
-    }
+	DB::DB(const AnsiString& aDB)
+	: ctx(NULL)
+	{
+		open(aDB.c_str());
+	}
 #endif
-    void DB::open(const char *aDB)
-    {
-        db = aDB;
+	void DB::open(const char *aDB)
+	{
+		db = aDB;
 		if (SQLITE_OK != sqlite3_open(aDB, &ctx))
 		{
 			throw Exception(ctx);
@@ -137,7 +137,7 @@ namespace SQLite
 				busy_handler,
 				NULL
 				);
-    }
+	}
 
 	DB::~DB()
 	{
@@ -184,23 +184,23 @@ namespace SQLite
 	}
 #endif
 
-    void __cdecl DB::execute(const char* aQuery, ...)
-    {
+	void __cdecl DB::execute(const char* aQuery, ...)
+	{
 		va_list ap;
 		va_start(ap, aQuery);
 		char *o = sqlite3_vmprintf(aQuery, ap);
 		va_end(ap);
 
-        string Query(o);
+		string Query(o);
 		sqlite3_free(o);
-        execute(Query);
-    }
+		execute(Query);
+	}
 
 
-    __int64 DB::lastInsertId() const
-    {
-        return sqlite3_last_insert_rowid(ctx);
-    }
+	__int64 DB::lastInsertId() const
+	{
+		return sqlite3_last_insert_rowid(ctx);
+	}
 
 	void DB::registerFunction(Function *aFunc)
 	{
