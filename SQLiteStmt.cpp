@@ -24,12 +24,14 @@ namespace SQLite
 	{
 		prepare();
 	}
+#ifdef __BORLANDC__
 	Stmt::Stmt(DB& aOwner, const AnsiString &aQuery)
 		: owner(aOwner), query(aQuery.c_str()), stmt(NULL)
 	{
 		prepare();
 	}
-    Stmt::Stmt(const Stmt &c)
+#endif
+	Stmt::Stmt(const Stmt &c)
 		: owner(c.owner), query(c.query), stmt(NULL)
 	{
 		prepare();
@@ -200,13 +202,13 @@ namespace SQLite
             stmt.execute();
         } catch (SQLite::Exception &ex)
         {
-            try { stmt.finalize(); } catch (SQLite::Exception &ex) {}
+            try { stmt.finalize(); } catch (SQLite::Exception) {}
             throw;
         }
     }
     Finalizer::~Finalizer()
     {
-        try { stmt.finalize(); } catch (SQLite::Exception &ex) {}
+        try { stmt.finalize(); } catch (SQLite::Exception) {}
     }
 
     Resetter::Resetter(Stmt& aStmt)
@@ -215,6 +217,6 @@ namespace SQLite
     }
     Resetter::~Resetter()
     {
-        try { stmt.reset(); } catch (SQLite::Exception &ex) {}
+        try { stmt.reset(); } catch (SQLite::Exception) {}
     }
 }

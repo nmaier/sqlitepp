@@ -2,8 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="sqlite++"
+	Name="sqlitepp"
 	ProjectGUID="{36E8930F-54BA-4B26-80D6-48065010ABC6}"
+	RootNamespace="sqlitepp"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
