@@ -19,10 +19,11 @@ using namespace std;
 #endif
 
 #if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__BORLANDC__)
-#   define OS_WIN
 #   include <windows.h>
+#	define os_sleep Sleep
 #else
 #   include <unistd.h>
+#	define os_sleep sleep
 #endif
 
 static int busy_handler(void *, int attempts)
@@ -30,12 +31,12 @@ static int busy_handler(void *, int attempts)
 	if (attempts < 1000)
 	{
 		// nasty. makes os scheduler context-switch
-		Sleep(0);
+		os_sleep(0);
 		return 1;
 	}
 	else if (attempts < 1200)
 	{
-		Sleep(100);
+		os_sleep(100);
 		return 1;
 	}
 
