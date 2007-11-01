@@ -57,7 +57,7 @@ namespace SQLite
 #ifdef __BORLANDC__
 	AnsiString escape(const AnsiString& in)
 	{
-		return mprintf(AnsiString("%q"), in.c_str());
+		return amprintf("%q", in.c_str());
 	}
 #endif
 	string _cdecl mprintf(const char *fmt, ...)
@@ -72,11 +72,11 @@ namespace SQLite
 		return rv;
 	}
 #ifdef __BORLANDC__
-	AnsiString _cdecl mprintf(const AnsiString& fmt, ...)
+	AnsiString _cdecl amprintf(const char* fmt, ...)
 	{
 		va_list ap;
 		va_start(ap, fmt);
-		char *o = sqlite3_vmprintf(fmt.c_str(), ap);
+		char *o = sqlite3_vmprintf(fmt, ap);
 		va_end(ap);
 
 		AnsiString rv(o);

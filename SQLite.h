@@ -448,11 +448,11 @@ namespace SQLite
 		~Resetter();
 	};
 
-	std::string escape(const std::string &in);
+	std::string escape(const std::string&);
 	std::string _cdecl mprintf(const char *, ...);
 #ifdef __BORLANDC__
-	AnsiString escape(const AnsiString& in);
-	AnsiString _cdecl mprintf(const AnsiString& fmt, ...);
+	AnsiString escape(const AnsiString& );
+	AnsiString _cdecl amprintf(const char *, ...);
 #endif
 
 	class DB
