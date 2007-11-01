@@ -24,7 +24,7 @@
 #include <sqlite3.h>
 
 #ifdef __BORLANDC__
-#   include <Classes.hpp>
+#	include <Classes.hpp>
 #endif
 
 namespace SQLite
@@ -450,6 +450,10 @@ namespace SQLite
 
 	std::string escape(const std::string &in);
 	std::string _cdecl mprintf(const char *, ...);
+#ifdef __BORLANDC__
+	AnsiString escape(const AnsiString& in);
+	AnsiString _cdecl mprintf(const AnsiString& fmt, ...);
+#endif
 
 	class DB
 	{

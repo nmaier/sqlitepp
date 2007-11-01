@@ -19,10 +19,10 @@ using namespace std;
 #endif
 
 #if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__BORLANDC__)
-#   include <windows.h>
+#	include <windows.h>
 #	define os_sleep Sleep
 #else
-#   include <unistd.h>
+#	include <unistd.h>
 #	define os_sleep usleep
 #endif
 
@@ -54,6 +54,12 @@ namespace SQLite
 	{
 		return mprintf("%q", in.c_str());
 	}
+#ifdef __BORLANDC__
+	AnsiString escape(const AnsiString& in)
+	{
+		return mprintf(AnsiString("%q"), in.c_str());
+	}
+#endif
 	string _cdecl mprintf(const char *fmt, ...)
 	{
 		va_list ap;
@@ -65,6 +71,20 @@ namespace SQLite
 		sqlite3_free(o);
 		return rv;
 	}
+#ifdef __BORLANDC__
+	AnsiString _cdecl mprintf(const AnsiString& fmt, ...)
+	{
+		va_list ap;
+		va_start(ap, fmt);
+		char *o = sqlite3_vmprintf(fmt.c_str(), ap);
+		va_end(ap);
+
+		AnsiString rv(o);
+		sqlite3_free(o);
+		return rv;
+	}
+#endif
+
 	Trans::Trans(DB& aDB, TransactionType aType)
 		: db(aDB), finished(false)
 	{
@@ -220,3 +240,4 @@ namespace SQLite
 		funcs.push_back(aFunc);
 	}
 }
+
