@@ -28,15 +28,20 @@ using namespace std;
 
 static int busy_handler(void *, int attempts)
 {
-	if (attempts < 1000)
+	if (attempts < 50)
 	{
 		// nasty. makes os scheduler context-switch
 		os_sleep(0);
 		return 1;
 	}
-	else if (attempts < 1200)
+	else if (attempts < 1000)
 	{
 		os_sleep(100);
+		return 1;
+	}
+	else if (attempts < 1200)
+	{
+		os_sleep(1000);
 		return 1;
 	}
 
@@ -149,7 +154,12 @@ namespace SQLite
 	void DB::open(const char *aDB)
 	{
 		db = aDB;
-		if (SQLITE_OK != sqlite3_open(aDB, &ctx))
+		if (SQLITE_OK != sqlite3_open_v2(
+			aDB,
+			&ctx,
+			SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+			NULL
+		))
 		{
 			throw Exception(ctx);
 		}

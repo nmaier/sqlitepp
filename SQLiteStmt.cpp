@@ -52,7 +52,7 @@ namespace SQLite
 	{			
 		done = ok = result = false;
 		const char *pTail = NULL;
-		if (sqlite3_prepare(owner.ctx, query.c_str(), (int)query.length(), &stmt, &pTail) != SQLITE_OK)
+		if (sqlite3_prepare_v2(owner.ctx, query.c_str(), (int)query.length(), &stmt, &pTail) != SQLITE_OK)
 		{
 			throw Exception(owner.ctx);
 		}
