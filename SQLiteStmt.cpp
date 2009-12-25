@@ -117,10 +117,11 @@ namespace SQLite
 		SQLOK(sqlite3_bind_text(stmt, idx, value.c_str(), (int)value.length(), SQLITE_TRANSIENT));
 	}
 #ifdef __BORLANDC__
-	void Stmt::bind(unsigned idx, const AnsiString& value)
+	void Stmt::bind(unsigned idx, const UnicodeString& value)
 	{
 		CHKTHROW;
-		SQLOK(sqlite3_bind_text(stmt, idx, value.c_str(), value.Length(), SQLITE_TRANSIENT));
+		UTF8String utf8 = value;
+		SQLOK(sqlite3_bind_text(stmt, idx, utf8.c_str(), utf8.Length(), SQLITE_TRANSIENT));
 	}
 #endif
 	void Stmt::bind(unsigned idx, const void *value, unsigned length)

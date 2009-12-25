@@ -77,15 +77,15 @@ namespace SQLite
 		return rv;
 	}
 #ifdef __BORLANDC__
-	BaseData::operator AnsiString() const { return asAString(); }
-	
-	AnsiString Data::asAString() const
+	BaseData::operator UnicodeString() const { return asUString(); }
+
+	UnicodeString Data::asUString() const
 	{
-		AnsiString rv;
-		const unsigned char *buf = sqlite3_column_text(stmt->stmt, (int)idx);
+		UnicodeString rv;
+		const wchar_t *buf = (const wchar_t*)sqlite3_column_text16(stmt->stmt, (int)idx);
 		if (buf)
 		{
-			rv = AnsiString((const char*)buf);
+			rv = UnicodeString(buf);
 		}
 		return rv;
 	}
@@ -113,6 +113,8 @@ namespace SQLite
 			);
 	}
 #ifdef __BORLANDC__
-	AnsiString Value::asAString() const { return AnsiString((const char*)sqlite3_value_text(val)); }
+	UnicodeString Value::asUString() const {
+		return UnicodeString(UTF8ToUnicodeString((const char*)sqlite3_value_text(val)));
+	}
 #endif
 }
